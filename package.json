@@ -17,6 +17,26 @@
   "directories": {
     "test": "test"
   },
+  "keywords": [
+    "express",
+    "express-error-handler",
+    "error-handler",
+    "error-middleware",
+    "async-handler",
+    "express-middleware",
+    "api-error",
+    "express-response",
+    "response-handler",
+    "express-helper",
+    "rest-api",
+    "express-utils",
+    "nodejs",
+    "http-error",
+    "api-response",
+    "express-async",
+    "error-handling",
+    "json-response"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   }
