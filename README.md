@@ -1,181 +1,108 @@
 # express-err-helper
 
-> Clean, consistent error handling and response formatting for Express.js APIs.
+Clean error handling and response formatting for Express.js APIs.
 
 [![npm version](https://img.shields.io/npm/v/express-err-helper)](https://www.npmjs.com/package/express-err-helper)
 [![license](https://img.shields.io/npm/l/express-err-helper)](https://github.com/mohdanas86/express-err-helper/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/express-err-helper)](https://www.npmjs.com/package/express-err-helper)
 
----
-
-## Why express-err-helper?
-
-- **Zero boilerplate** — stop repeating `res.status(200).json(...)` in every route
-- **Consistent responses** — every success and error follows the same JSON shape
-- **Async-ready** — wrap async route handlers without try/catch clutter
-- **Lightweight** — no dependencies beyond Express
-
----
-
-## Installation
+## Install
 
 ```bash
 npm install express-err-helper
 ```
 
----
-
-## Quick Start
+## Usage
 
 ```js
-import express from 'express';
-import {
-  asyncHandler,
-  ApiError,
-  errorHandler,
-  responseHandler,
+// step 1: Import modules
+import { 
+  asyncHandler, 
+  ApiError, 
+  errorHandler, 
+  responseHandler 
 } from 'express-err-helper';
 
-const app = express();
+// step 2: attach res.success / res.error
+app.use(responseHandler); 
 
-// Register responseHandler BEFORE your routes
-app.use(responseHandler);
-
-app.get('/users', asyncHandler(async (req, res) => {
-  const users = await getUsers();
-  res.success(users, 'Users fetched successfully');
+// step 3: write your routes
+app.get('/hello', asyncHandler(async (req, res) => {
+  res.success({ name: 'Anas' }, 'Hello!');
 }));
 
 app.get('/fail', asyncHandler(async (req, res) => {
-  throw new ApiError('User not found', 404);
+  throw new ApiError('Something went wrong', 400);
 }));
 
-// Register errorHandler AFTER all routes
+// step 4: catch all errors
 app.use(errorHandler);
-
-app.listen(3000);
 ```
 
----
+## Middleware Order
 
-## API Reference
+```
+app.use(responseHandler)  ← before routes
+app.use(yourRoutes)
+app.use(errorHandler)     ← after routes
+```
+
+## API
+
+| Export            | Type        | Purpose                                                              |
+| ----------------- | ----------- | -------------------------------------------------------------------- |
+| `responseHandler` | Middleware  | Attaches `res.success()` and `res.error()` to every response         |
+| `asyncHandler`    | Wrapper     | Wraps async route handlers, forwards errors to Express automatically |
+| `ApiError`        | Error class | Creates errors with a custom HTTP status code                        |
+| `errorHandler`    | Middleware  | Catches all errors and sends a consistent JSON error response        |
+
+---
 
 ### `responseHandler`
 
-Middleware that attaches `res.success()` and `res.error()` to the response object.
-
-**Must be registered before your routes.**
-
-```js
-app.use(responseHandler);
-```
-
----
+Adds `res.success()` and `res.error()` to every response object.
 
 #### `res.success(data, message?)`
 
-Sends a `200 OK` JSON response.
-
-| Parameter | Type   | Default     | Description           |
-|-----------|--------|-------------|-----------------------|
-| `data`    | `any`  | —           | The response payload  |
-| `message` | `string` | `"success"` | A status message    |
-
-**Response shape:**
-```json
-{
-  "success": true,
-  "message": "Users fetched successfully",
-  "data": { ... }
-}
-```
-
-**Example:**
 ```js
-app.get('/profile', (req, res) => {
-  res.success({ name: 'Anas' }, 'Profile fetched');
-});
+res.success({ name: 'Anas' }, 'Profile fetched');
+// { success: true, message: "Profile fetched", data: { name: "Anas" } }
 ```
-
----
 
 #### `res.error(message?, status?)`
 
-Sends a JSON error response with the given HTTP status.
-
-| Parameter | Type     | Default             | Description        |
-|-----------|----------|---------------------|--------------------|
-| `message` | `string` | `"Error"`           | Error message      |
-| `status`  | `number` | `500`               | HTTP status code   |
-
-**Response shape:**
-```json
-{
-  "success": false,
-  "message": "Something went wrong"
-}
-```
-
-**Example:**
 ```js
-app.get('/restricted', (req, res) => {
-  res.error('Unauthorized', 401);
-});
+res.error('Unauthorized', 401);
+// { success: false, message: "Unauthorized" }
 ```
 
 ---
 
 ### `ApiError`
 
-A custom error class that carries an HTTP status code.
+Custom error class with an HTTP status code. Throw it inside `asyncHandler` and `errorHandler` will catch it automatically.
 
 ```js
-throw new ApiError(message, status?);
-```
-
-| Parameter | Type     | Default | Description             |
-|-----------|----------|---------|-------------------------|
-| `message` | `string` | —       | Human-readable message  |
-| `status`  | `number` | `500`   | HTTP status code        |
-
-**Example:**
-```js
-throw new ApiError('Product not found', 404);
-throw new ApiError('Unauthorized', 401);
-throw new ApiError('Something broke'); // defaults to 500
+throw new ApiError('User not found', 404);
+throw new ApiError('Something broke'); // status defaults to 500
 ```
 
 ---
 
 ### `errorHandler`
 
-Express error-handling middleware. Catches any error passed to `next()` or thrown inside `asyncHandler`, and sends a consistent JSON error response.
-
-**Must be registered after all routes.**
+Catches all errors (from `next(err)` or thrown inside `asyncHandler`) and sends a consistent JSON error response. Must be registered **after all routes**.
 
 ```js
 app.use(errorHandler);
-```
-
-**Response shape:**
-```json
-{
-  "success": false,
-  "message": "Product not found"
-}
 ```
 
 ---
 
 ### `asyncHandler`
 
-Wraps an async route handler and automatically forwards any thrown errors to Express's `next(err)` — no try/catch needed.
+Wraps async route handlers — no try/catch needed. Any thrown error is automatically forwarded to Express.
 
-```js
-asyncHandler(fn)
-```
-
-**Example:**
 ```js
 app.get('/orders', asyncHandler(async (req, res) => {
   const orders = await Order.find();
@@ -183,76 +110,17 @@ app.get('/orders', asyncHandler(async (req, res) => {
 }));
 ```
 
----
-
-## Response Format
-
-All responses follow a consistent structure:
+## Response Shape
 
 **Success**
 ```json
-{
-  "success": true,
-  "message": "...",
-  "data": { ... }
-}
+{ "success": true, "message": "Users fetched", "data": [ ] }
 ```
 
 **Error**
 ```json
-{
-  "success": false,
-  "message": "..."
-}
+{ "success": false, "message": "User not found" }
 ```
-
----
-
-## Complete Example
-
-```js
-import express from 'express';
-import {
-  asyncHandler,
-  ApiError,
-  errorHandler,
-  responseHandler,
-} from 'express-err-helper';
-
-const app = express();
-app.use(express.json());
-app.use(responseHandler); // <-- must come before routes
-
-const users = [{ id: 1, name: 'Anas' }];
-
-// GET all users
-app.get('/users', asyncHandler(async (req, res) => {
-  res.success(users, 'Users fetched successfully');
-}));
-
-// GET single user
-app.get('/users/:id', asyncHandler(async (req, res) => {
-  const user = users.find(u => u.id === Number(req.params.id));
-  if (!user) throw new ApiError('User not found', 404);
-  res.success(user);
-}));
-
-app.use(errorHandler); // <-- must come after routes
-
-app.listen(3000, () => console.log('Server running on port 3000'));
-```
-
----
-
-## Middleware Order
-
-```
-app.use(responseHandler)   ← 1st: attaches res.success / res.error
-app.use(routes)            ← 2nd: your route handlers
-app.use(errorHandler)      ← last: catches all errors
-```
-
----
 
 ## License
 
