@@ -1,43 +1,48 @@
 {
-  "name": "express-err-helper",
-  "version": "1.0.1",
-  "description": "Clean error and response handler for Express APIs",
-  "homepage": "https://github.com/mohdanas86/express-err-helper#readme",
-  "bugs": {
-    "url": "https://github.com/mohdanas86/express-err-helper/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mohdanas86/express-err-helper.git"
-  },
-  "license": "Apache-2.0",
-  "author": "Anas Alam",
-  "type": "module",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "keywords": [
-    "express",
-    "express-error-handler",
-    "error-handler",
-    "error-middleware",
-    "async-handler",
-    "express-middleware",
-    "api-error",
-    "express-response",
-    "response-handler",
-    "express-helper",
-    "rest-api",
-    "express-utils",
-    "nodejs",
-    "http-error",
-    "api-response",
-    "express-async",
-    "error-handling",
-    "json-response"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+    "name": "express-err-helper",
+    "version": "1.0.1",
+    "description": "Clean error and response handler for Express APIs",
+    "homepage": "https://github.com/mohdanas86/express-err-helper#readme",
+    "bugs": {
+        "url": "https://github.com/mohdanas86/express-err-helper/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mohdanas86/express-err-helper.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Anas Alam",
+    "type": "module",
+    "main": "index.js",
+    "directories": {
+        "test": "test"
+    },
+    "keywords": [
+        "express",
+        "express-error-handler",
+        "error-handler",
+        "error-middleware",
+        "async-handler",
+        "express-middleware",
+        "api-error",
+        "express-response",
+        "response-handler",
+        "express-helper",
+        "rest-api",
+        "express-utils",
+        "nodejs",
+        "http-error",
+        "api-response",
+        "express-async",
+        "error-handling",
+        "json-response"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write .",
+        "lint": "prettier --check ."
+    },
+    "devDependencies": {
+        "prettier": "^3.8.1"
+    }
 }

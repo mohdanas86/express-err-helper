@@ -3,16 +3,16 @@ function responseHandler(req, res, next) {
         res.status(200).json({
             success: true,
             message,
-            data
+            data,
         });
-    }
+    };
 
     res.error = function (message = "Error", status = 500) {
         res.status(status).json({
             success: false,
-            message
-        })
-    }
+            message,
+        });
+    };
 
     next();
 }
