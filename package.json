@@ -1,6 +1,6 @@
 {
     "name": "express-err-helper",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Clean error and response handler for Express APIs",
     "homepage": "https://github.com/mohdanas86/express-err-helper#readme",
     "bugs": {
